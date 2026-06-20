@@ -1,0 +1,18 @@
+# 配置示例文件
+# 使用说明：复制本文件为 config.yaml，然后填写真实值。
+#
+# 字段说明：
+#   app_id     : 应用 ID，请在开放平台后台获取
+#   app_secret : 应用密钥，请在开放平台后台获取
+#   template_id: 消息模板 ID
+#   user       : 接收消息的用户 OpenID
+#   data       : 模板消息填充数据
+
+app_id: "your_app_id_here"
+app_secret: "your_app_secret_here"
+template_id: "your_template_id_here"
+user: "your_openid_here"
+data:
+  result:
+    value: "测试消息"
+    color: "#173177"

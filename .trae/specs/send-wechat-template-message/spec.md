@@ -6,7 +6,9 @@
 ## What Changes
 - 新增 `send_wechat_template.py` 脚本，负责读取配置、获取 access_token、发送模板消息。
 - 新增 `config.example.json` 配置文件模板，包含 `app_id`、`app_secret`、`template_id`、`user` 字段。
-- 新增 `requirements.txt`，声明 `requests` 依赖。
+- 新增 `config.example.yaml` 配置文件模板，作为 YAML 格式示例。
+- 修改 `send_wechat_template.py`，使其同时支持 JSON 与 YAML 配置文件，并根据文件扩展名自动选择解析器。
+- 更新 `requirements.txt`，新增 `pyyaml` 依赖。
 
 ## Impact
 - 仅新增独立脚本和配置文件，不影响现有代码。
@@ -15,7 +17,7 @@
 ## ADDED Requirements
 
 ### Requirement: 读取配置
-脚本 SHALL 从指定的 JSON 配置文件中读取 `app_id`、`app_secret`、`template_id`、`user`。
+脚本 SHALL 从指定的 JSON 或 YAML 配置文件中读取 `app_id`、`app_secret`、`template_id`、`user`。根据文件扩展名 `.json`、`.yaml`、`.yml` 自动选择解析器。
 
 #### Scenario: 正常读取
 - **WHEN** 配置文件存在且包含所有必填字段
@@ -24,6 +26,10 @@
 #### Scenario: 配置缺失
 - **WHEN** 配置文件不存在或必填字段缺失
 - **THEN** 脚本打印清晰的错误信息并以非零状态码退出
+
+#### Scenario: 格式错误
+- **WHEN** JSON 或 YAML 配置文件格式非法
+- **THEN** 脚本打印解析错误信息并以非零状态码退出
 
 ### Requirement: 获取微信 access_token
 脚本 SHALL 使用 `app_id` 和 `app_secret` 调用微信接口获取 `access_token`。

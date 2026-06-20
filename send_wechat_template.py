@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 import requests
+import yaml
 
 TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
@@ -14,16 +15,24 @@ REQUIRED_CONFIG_FIELDS = ["app_id", "app_secret", "template_id", "user"]
 
 
 def load_config(config_path: str) -> dict:
-    """加载并校验 JSON 配置文件。"""
+    """加载并校验 JSON/YAML 配置文件。"""
     path = Path(config_path)
     if not path.is_file():
         raise FileNotFoundError(f"配置文件不存在: {path.absolute()}")
 
+    suffix = path.suffix.lower()
     try:
         with path.open("r", encoding="utf-8") as f:
-            config = json.load(f)
+            if suffix == ".json":
+                config = json.load(f)
+            elif suffix in (".yaml", ".yml"):
+                config = yaml.safe_load(f)
+            else:
+                raise ValueError(f"不支持的配置文件格式: {suffix}")
     except json.JSONDecodeError as exc:
         raise ValueError(f"配置文件 JSON 格式错误: {exc}") from exc
+    except yaml.YAMLError as exc:
+        raise ValueError(f"配置文件 YAML 格式错误: {exc}") from exc
 
     missing = [field for field in REQUIRED_CONFIG_FIELDS if field not in config]
     if missing:
